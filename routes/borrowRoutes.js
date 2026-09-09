@@ -3,7 +3,7 @@ const express = require("express");
 const {
   borrowBook,
   returnBook,
-  myBorrows,
+  getMyBorrows,
   getAllBorrows
 } = require("../controllers/borrowController");
 
@@ -20,10 +20,23 @@ router.post(
   borrowBook
 );
 
-router.put("/:id/return", auth, returnBook);
+router.put(
+  "/:id/return",
+  auth,
+  returnBook
+);
 
-router.get("/my", auth, myBorrows);
+router.get(
+  "/my",
+  auth,
+  getMyBorrows
+);
 
-router.get("/", auth, admin, getAllBorrows);
+router.get(
+  "/",
+  auth,
+  admin,
+  getAllBorrows
+);
 
 module.exports = router;

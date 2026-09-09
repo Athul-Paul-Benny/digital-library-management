@@ -1,126 +1,121 @@
-
 const Borrow = require("../models/Borrow");
 const Book = require("../models/Book");
 
-// Borrow Book
-exports.borrowBook = async (req, res, next) => {
+const borrowBook = async (req, res, next) => {
   try {
     const { bookId, dueDate } = req.body;
-    if (new Date(dueDate) <= new Date()) {
-  return res.status(400).json({
-    message: "Due date must be in the future"
-    });
-    }
 
     const book = await Book.findById(bookId);
 
     if (!book) {
       return res.status(404).json({
-        message: "Book not found"
+        success: false,
+        message: "Book not found",
       });
     }
 
-    if (book.availableQuantity <= 0) {
+    if (book.availableCopies <= 0) {
       return res.status(400).json({
-        message: "Book is not available"
-      });
-    }
-
-    const existingBorrow = await Borrow.findOne({
-      userId: req.user.userId,
-      bookId,
-      status: "borrowed"
-    });
-
-    if (existingBorrow) {
-      return res.status(400).json({
-        message: "You already borrowed this book"
+        success: false,
+        message: "No copies available",
       });
     }
 
     const borrow = await Borrow.create({
-      userId: req.user.userId,
-      bookId,
-      dueDate
+      user: req.user.userId,
+      book: bookId,
+      dueDate,
     });
 
-    book.availableQuantity--;
+    book.availableCopies -= 1;
     await book.save();
 
     res.status(201).json({
+      success: true,
       message: "Book borrowed successfully",
-      borrow
+      data: borrow,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// Return Book
-exports.returnBook = async (req, res, next) => {
+const returnBook = async (req, res, next) => {
   try {
-    const borrow = await Borrow.findOne({
-      _id: req.params.id,
-      userId: req.user.userId,
-      status: "borrowed"
-    });
+    const borrow = await Borrow.findById(req.params.id);
 
     if (!borrow) {
       return res.status(404).json({
-        message: "Borrow record not found"
+        success: false,
+        message: "Borrow record not found",
       });
     }
 
-    borrow.status = "returned";
-    borrow.returnDate = new Date();
+    if (borrow.returnDate) {
+      return res.status(400).json({
+        success: false,
+        message: "Book already returned",
+      });
+    }
 
+    borrow.returnDate = new Date();
     await borrow.save();
 
-    const book = await Book.findById(borrow.bookId);
+    const book = await Book.findById(borrow.book);
 
     if (book) {
-      book.availableQuantity++;
+      book.availableCopies += 1;
       await book.save();
     }
 
     res.json({
+      success: true,
       message: "Book returned successfully",
-      borrow
+      data: borrow,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// My Borrowed Books
-exports.myBorrows = async (req, res, next) => {
+const getMyBorrows = async (req, res, next) => {
   try {
     const borrows = await Borrow.find({
-      userId: req.user.userId
-    }).populate("bookId", "title author category");
+      user: req.user.userId,
+    })
+      .populate("book")
+      .sort({ createdAt: -1 });
 
     res.json({
+      success: true,
       count: borrows.length,
-      borrows
+      data: borrows,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// Get All Borrow Records
-exports.getAllBorrows = async (req, res, next) => {
+const getAllBorrows = async (req, res, next) => {
   try {
     const borrows = await Borrow.find()
-      .populate("userId", "name email")
-      .populate("bookId", "title author");
+      .populate("user", "name email role")
+      .populate("book", "title author isbn category")
+      .sort({ createdAt: -1 });
 
     res.json({
+      success: true,
       count: borrows.length,
-      borrows
+      data: borrows,
     });
   } catch (error) {
     next(error);
   }
 };
 
+module.exports = {
+  borrowBook,
+  returnBook,
+  getMyBorrows,
+  getAllBorrows,
+};
