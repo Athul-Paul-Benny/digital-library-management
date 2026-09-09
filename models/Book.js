@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const bookSchema = new mongoose.Schema(
@@ -15,12 +14,6 @@ const bookSchema = new mongoose.Schema(
       trim: true
     },
 
-    category: {
-      type: String,
-      required: true,
-      trim: true
-    },
-
     isbn: {
       type: String,
       required: true,
@@ -28,15 +21,33 @@ const bookSchema = new mongoose.Schema(
       trim: true
     },
 
-    quantity: {
+    category: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
+    totalCopies: {
       type: Number,
       required: true,
       min: 0
     },
 
-    availableQuantity: {
+    availableCopies: {
       type: Number,
       required: true,
+      min: 0
+    },
+
+    lostCopies: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+
+    damagedCopies: {
+      type: Number,
+      default: 0,
       min: 0
     }
   },
@@ -45,5 +56,9 @@ const bookSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Book", bookSchema);
+bookSchema.index({ title: 1 });
+bookSchema.index({ author: 1 });
+bookSchema.index({ category: 1 });
+bookSchema.index({ isbn: 1 });
 
+module.exports = mongoose.model("Book", bookSchema);
