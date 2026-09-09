@@ -130,9 +130,9 @@ function App() {
     try {
       setLoading(true);
 
-      const response = await getBooks();
+      const books = await getBooks();
 
-      setBooks(response.data || []);
+      setBooks(books || []);
     } catch (err: any) {
       setError(
         err?.message || "Unable to load books."

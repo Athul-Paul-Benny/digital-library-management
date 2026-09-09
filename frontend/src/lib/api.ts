@@ -136,11 +136,13 @@ export async function updateProfile(data: {
 }
 
 export async function getBooks() {
-  return request<{
+  const response = await request<{
     success: boolean;
     count: number;
     data: Book[];
   }>("/books");
+
+  return response.data;
 }
 
 export async function getBook(id: string) {
@@ -212,13 +214,14 @@ export async function searchBooks(params: {
     }
   });
 
-  return request<{
+  const response = await request<{
     success: boolean;
     count: number;
     data: Book[];
   }>(`/books/search?${query.toString()}`);
-}
 
+  return response.data;
+}
 export async function borrowBook(bookId: string, dueDate: string) {
   return request<any>("/borrow", {
     method: "POST",
