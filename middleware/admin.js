@@ -1,9 +1,8 @@
 const admin = (req, res, next) => {
-  if (!req.user || req.user.role !== "admin") {
+  if (!req.user || !["admin", "librarian"].includes(req.user.role)) {
     return res.status(403).json({
       success: false,
-      message: "Admin access required",
-      errorCode: "AUTHORIZATION_ERROR"
+      message: "Access denied"
     });
   }
 

@@ -127,12 +127,12 @@ function App() {
     user?.role === "librarian";
 
   async function loadBooks() {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const books = await getBooks();
+    const response = await getBooks();
 
-      setBooks(books || []);
+    setBooks(response || []);
     } catch (err: any) {
       setError(
         err?.message || "Unable to load books."

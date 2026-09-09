@@ -14,16 +14,16 @@ const bookSchema = new mongoose.Schema(
       trim: true
     },
 
+    category: {
+      type: String,
+      required: true,
+      trim: true
+    },
+
     isbn: {
       type: String,
       required: true,
       unique: true,
-      trim: true
-    },
-
-    category: {
-      type: String,
-      required: true,
       trim: true
     },
 
@@ -55,10 +55,5 @@ const bookSchema = new mongoose.Schema(
     timestamps: true
   }
 );
-
-bookSchema.index({ title: 1 });
-bookSchema.index({ author: 1 });
-bookSchema.index({ category: 1 });
-bookSchema.index({ isbn: 1 });
 
 module.exports = mongoose.model("Book", bookSchema);
