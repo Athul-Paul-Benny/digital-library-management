@@ -30,10 +30,14 @@ const borrowBook = async (req, res, next) => {
     book.availableCopies -= 1;
     await book.save();
 
+    const populated = await Borrow.findById(borrow._id)
+      .populate("user", "name email role")
+      .populate("book", "title author isbn category");
+
     res.status(201).json({
       success: true,
       message: "Book borrowed successfully",
-      data: borrow,
+      data: populated,
     });
   } catch (error) {
     next(error);
@@ -51,14 +55,15 @@ const returnBook = async (req, res, next) => {
       });
     }
 
-    if (borrow.returnDate) {
+    if (borrow.returnedAt || borrow.status === "returned") {
       return res.status(400).json({
         success: false,
         message: "Book already returned",
       });
     }
 
-    borrow.returnDate = new Date();
+    borrow.returnedAt = new Date();
+    borrow.status = "returned";
     await borrow.save();
 
     const book = await Book.findById(borrow.book);

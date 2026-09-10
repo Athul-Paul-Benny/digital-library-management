@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -12,15 +14,17 @@ body,
 
 body {
   font-family:
-    Inter,
+    'Inter',
     ui-sans-serif,
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
     sans-serif;
-  background: #f7f9f8;
+  background: #f0f4f3;
   color: #173f3b;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
@@ -37,7 +41,7 @@ button {
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 2px solid #76a9a1;
+  outline: 2px solid #14b8a6;
   outline-offset: 2px;
 }
 
@@ -46,26 +50,50 @@ input::placeholder {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f4;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c7d5d2;
+  background: rgba(0,0,0,0.12);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #aabebb;
+  background: rgba(0,0,0,0.2);
 }
+
+/* ── Animations ─────────────────────────────────────── */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Responsive ─────────────────────────────────────── */
 
 @media (max-width: 800px) {
   aside {
-    width: 290px !important;
+    width: 268px !important;
   }
 
   main {
@@ -84,7 +112,7 @@ input::placeholder {
 
 @media (max-width: 600px) {
   h1 {
-    font-size: 36px !important;
+    font-size: 30px !important;
   }
 
   main > div {
